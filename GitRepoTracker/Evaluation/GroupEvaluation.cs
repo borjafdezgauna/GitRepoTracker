@@ -33,7 +33,7 @@ namespace GitRepoTracker.Evaluation
                             new ItemList("failed tests", i < report.LastCommit.Stats.DeadlineTestsResults.Count ? 
                             report.LastCommit.Stats.DeadlineTestsResults[i].Failed : null)));
                 }
-                EvaluationItems.Add(new RealValueEvaluationItem("Valid develop branch build/test time %",
+                EvaluationItems.Add(new RealValueEvaluationItem("Valid master branch build/test time %",
                     Commit.CorrectBuildTimePercent(report.Commits, DateTime.Now)));
                 EvaluationItems.Add(new RealValueEvaluationItem("Code style/naming rules %",
                     report.LastCommit.Stats.AnalysisResult != null ? report.LastCommit.Stats.AnalysisResult.Score() : 0,
