@@ -14,8 +14,8 @@ namespace GitRepoTracker.Evaluation
             {
                 EvaluationItems.Add(new Requirement("Master branch build",
                     report.MasterHeadCommit.Stats.Builds));
-                EvaluationItems.Add(new Requirement("Develop branch build",
-                    report.LastCommit.Stats.Builds));
+                //EvaluationItems.Add(new Requirement("Develop branch build",
+                //    report.LastCommit.Stats.Builds));
                 EvaluationItems.Add(new Requirement("Group tests passed",
                     report.LastCommit.Stats.UserTestsResults.PercentPassed() == 100));
                 EvaluationItems.Add(new RealValueEvaluationItem("Group tests coverage %",

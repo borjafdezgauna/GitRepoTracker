@@ -132,52 +132,45 @@ namespace GitRepoTracker
                 report.MasterHeadCommit = new Commit();
                 report.MasterHeadCommit.Stats.Builds = gitRepo.CheckProjectBuilds();
 
-                success = gitRepo.CheckoutBranch("develop");
-                if (!success)
-                    success = gitRepo.CheckoutBranch("Develop");
+                List<string> pushedCommits = client.GetPushedCommits(gitRepo.ProjectUsername, gitRepo.ProjectName, gitRepo.CurrentBranch).Result;
 
-                if (success)
-                {
-                    List<string> pushedCommits = client.GetPushedCommits(gitRepo.ProjectUsername, gitRepo.ProjectName, gitRepo.CurrentBranch).Result;
+                gitRepo.Pull();
 
-                    gitRepo.Pull();
-
-                    //GitOutputParser.UnknownUsers.Clear();
-                    List<Commit> commits = gitRepo.Commits(group);
+                //GitOutputParser.UnknownUsers.Clear();
+                List<Commit> commits = gitRepo.Commits(group);
                   
-                    foreach (Commit commit in commits)
+                foreach (Commit commit in commits)
+                {
+                    if (report.Commits.Find(c => c.Id == commit.Id) != null)
+                        continue;
+
+                    success = gitRepo.CheckoutCommit(commit.Id);
+                    if (success)
                     {
-                        if (report.Commits.Find(c => c.Id == commit.Id) != null)
-                            continue;
-
-                        success = gitRepo.CheckoutCommit(commit.Id);
-                        if (success)
-                        {
-                            commit.Stats.Builds = gitRepo.CheckProjectBuilds();
-                            bool lastCommit = commit.Equals(commits[commits.Count - 1]);
-                            commit.Stats.PushedToServer = pushedCommits.Contains(commit.Id);
+                        commit.Stats.Builds = gitRepo.CheckProjectBuilds();
+                        bool lastCommit = commit.Equals(commits[commits.Count - 1]);
+                        commit.Stats.PushedToServer = pushedCommits.Contains(commit.Id);
                             
-                            report.Commits.Add(commit);
+                        report.Commits.Add(commit);
 
-                            //Blame code?
-                            if (lastCommit)
-                                gitRepo.Blame(group, commit, Config.StartDate);
+                        //Blame code?
+                        if (lastCommit)
+                            gitRepo.Blame(group, commit, Config.StartDate);
 
-                            //Run user's tests
-                            commit.Stats.UserTestsResults = gitRepo.Test(commit.Stats, true, null);
+                        //Run user's tests
+                        commit.Stats.UserTestsResults = gitRepo.Test(commit.Stats, true, null);
 
-                            bool buildsAndPassesTests = commit.Stats.PushedToServer && commit.Stats.UserTestsResults.PercentPassed() == 100;                          
+                        bool buildsAndPassesTests = commit.Stats.PushedToServer && commit.Stats.UserTestsResults.PercentPassed() == 100;                          
 
-                            //Run black-box tests
-                            RunBlackBoxTests(gitRepo, commit);
+                        //Run black-box tests
+                        RunBlackBoxTests(gitRepo, commit);
 
-                            commit.Stats.AnalysisResult = analyzer.Analyze(gitRepo.Folder,
-                                gitRepo.CodeFilesInFolder(), "DBManager");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Error: not sure what the problem is");
-                        }
+                        commit.Stats.AnalysisResult = analyzer.Analyze(gitRepo.Folder,
+                            gitRepo.CodeFilesInFolder(), "DBManager");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: not sure what the problem is");
                     }
 
                     //After processing all commits

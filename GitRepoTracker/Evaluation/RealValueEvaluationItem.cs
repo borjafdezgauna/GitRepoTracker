@@ -11,9 +11,9 @@ namespace GitRepoTracker.Evaluation
         public override string Value() => Utils.DoubleToString(m_value,1);
         public override double Score()
         {
-            if (m_value >= 0 && Settings.Minimum != 0)
+            if (m_value >= 0 && Settings?.Minimum != 0)
             {
-                if (m_value >= Settings.Minimum)
+                if (m_value >= Settings?.Minimum)
                     return Math.Max(0, Math.Min(MaxScore, Settings.Weight * (0.5 + 0.5 * (m_value - Settings.Minimum)/ (Settings.Maximum - Settings.Minimum))));
                 return Math.Max(0, Math.Min(MaxScore, Settings.Weight * 0.5 * (m_value / Settings.Minimum)));
             }

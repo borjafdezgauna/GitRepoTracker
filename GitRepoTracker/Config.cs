@@ -191,7 +191,7 @@ namespace GitRepoTracker
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading Xml configuration file");
+                Console.WriteLine($"Error loading Xml configuration file: {ex.Message}");
             }
         }
 
