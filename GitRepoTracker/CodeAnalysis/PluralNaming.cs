@@ -12,7 +12,7 @@ namespace GitRepoTracker.CodeAnalysis
         {
             return new List<string>()
             {
-                @"(?:List\s*<[^>]+>)\s+(\w+[^s])[;\(]",
+                @"(?:List\s*<[^>]+>)\s+(((?!s[A-Z])\w)+[^s])[;\(]"
             };
         }
         public override string ProcessMatch(Match match)
@@ -21,7 +21,8 @@ namespace GitRepoTracker.CodeAnalysis
         }
         public override string UserFriendlyName()
         {
-            return "Multi-valued variables (i.e. lists) and multi-valued value-returning methods should end with an 's'. It is missleading";
+            return "Multi-valued variables (i.e. lists) and multi-valued value-returning methods should end with an 's' (Indices()) " +
+                "or should begin with a word ending in 's' (IndicesWhereIsTrue()). It is missleading";
         }
     }
 }
