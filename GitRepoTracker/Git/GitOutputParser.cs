@@ -103,8 +103,7 @@ namespace GitRepoTracker
             {
                 //Parse test coverage results
                 string coverageFileRegex = "Attachments:[\\s\\n\\r]+([\\w:\\\\\\.-]+.xml)";
-                Match match = Regex.Match(output, coverageFileRegex);
-                if (match.Success)
+                foreach (Match match in Regex.Matches(output, coverageFileRegex))
                 {
                     string coverageFile = match.Groups[1].Value;
                     ParseCoverageResults(coverageFile, stats);
