@@ -138,7 +138,7 @@ namespace GitRepoTracker
                         processedBuildingParents.Add(prevBuildingCommit);
 
                     //Compare with previous stats and update incremental stats
-                    if (commit.Stats.Builds)
+                    if (commit.Date >= Program.Config.StartDate && commit.Stats.Builds)
                     {
                         double coveragePercentInc = commit.Stats.CoveragePercent - prevBuildingCommit.Stats.CoveragePercent;
                         incrementalStats.CoveragePercent += coveragePercentInc;
