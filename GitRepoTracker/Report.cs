@@ -137,7 +137,7 @@ namespace GitRepoTracker
                 
                 string userStatus = memberPasses & groupPasses ? okPath : errorPath;
 
-                if (individualScore > 0)
+                if (true)//(individualScore > 0)
                 {
                     output += ToggleSwitch($"{userStatus} {user}: {Utils.DoubleToString(groupScore, 2)}/{Utils.DoubleToString(maxGroupScore, 2)} + " +
                         $"{Utils.DoubleToString(individualScore, 2)}/{Utils.DoubleToString(maxIndividualScore, 2)} = " +
