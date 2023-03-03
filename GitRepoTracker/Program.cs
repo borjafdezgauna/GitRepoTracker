@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Reflection;
 
@@ -157,8 +158,7 @@ namespace GitRepoTracker
                         if (lastCommit)
                             gitRepo.Blame(group, commit, Config.StartDate);
 
-                        //Run user's tests
-                        commit.Stats.UserTestsResults = gitRepo.Test(commit.Stats, true, null);
+                        RunUserTests(gitRepo, commit);
 
                         bool buildsAndPassesTests = commit.Stats.PushedToServer && commit.Stats.UserTestsResults.PercentPassed() == 100;                          
 
@@ -206,6 +206,22 @@ namespace GitRepoTracker
             return Reports;
         }
 
+        private static void RunUserTests(GitRepo gitRepo, Commit commit)
+        {
+            List<string> projects = gitRepo.GetAllProjects();
+            //Watch out! we're assuming that all test projects contain "Test" either in the project's name
+            //or in the folder
+            projects = projects.FindAll(proj => proj.Contains("Test"));
+            TestResults globalResults = new TestResults();
+            foreach (string project in projects)
+            {
+                TestResults projectTestResults = gitRepo.Test(true, project);
+                globalResults.Merge(projectTestResults);
+            }
+            //Run user's tests
+            commit.Stats.UserTestsResults = globalResults;
+        }
+
         private static void RunBlackBoxTests(GitRepo gitRepo, Commit commit)
         {
             string mainLibProject = gitRepo.FindProjectByName(Config.TestedProjectName);
@@ -223,10 +239,9 @@ namespace GitRepoTracker
 
                             if (commit.Date >= deadline.Start)
                             {
-                                TestResults testResults = testRepo.Test(commit.Stats, false, blackTestProject);
+                                TestResults testResults = testRepo.Test(false, blackTestProject);
                                 if (testResults != null)
                                 {
-                                    testResults.TestName = deadline.Name;
                                     commit.Stats.DeadlineTestsResults.Add(testResults);
                                 }
                             }

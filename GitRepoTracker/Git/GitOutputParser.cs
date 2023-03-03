@@ -50,8 +50,10 @@ namespace GitRepoTracker
             }
         }
 
-        static void ParseCoverageResults(string file, CommitStats stats)
+        static void ParseCoverageResults(string file, out double coverage)
         {
+            coverage = 0;
+
             if (string.IsNullOrEmpty(file))
                 return;
             if (!System.IO.File.Exists(file))
@@ -66,7 +68,7 @@ namespace GitRepoTracker
                 if (rootNode != null)
                 {
                     //<coverage line-rate="0.2" branch-rate="0.07139999999999999" version="1.9" timestamp="1645085224" lines-covered="18" lines-valid="90" branches-covered="1" branches-valid="14">
-                    double coverage = 0;
+                    
                     if (rootNode.Attributes.GetNamedItem("line-rate") != null)
                     {
                         string lineRateAttr = rootNode.Attributes["line-rate"].Value;
@@ -79,14 +81,14 @@ namespace GitRepoTracker
                         if (double.TryParse(lineRateAttr, out double branchCoverage))
                             coverage += branchCoverage;
                     }
-                    stats.CoveragePercent = coverage * 50;
+                    coverage = coverage * 50;
                 }
             }
             catch
             { }
         }
 
-        public static TestResults ParseTestResults(string output, CommitStats stats, bool calculateCoverage)
+        public static TestResults ParseTestResults(string output, bool calculateCoverage)
         {
             TestResults testResults = new TestResults();
 
@@ -101,13 +103,21 @@ namespace GitRepoTracker
 
             if (calculateCoverage)
             {
+                if (output.IndexOf("Attachments:") < 0)
+                    return testResults;
+
                 //Parse test coverage results
-                string coverageFileRegex = "Attachments:[\\s\\n\\r]+([\\w:\\\\\\.-]+.xml)";
-                foreach (Match match in Regex.Matches(output, coverageFileRegex))
+                double totalCoverage = 0;
+                string attachmentsSection = output.Substring(output.IndexOf("Attachments:"));
+                string coverageFileRegex = "\\s+([\\w:\\\\\\.-]+.xml)";
+                MatchCollection matches = Regex.Matches(attachmentsSection, coverageFileRegex);
+                foreach (Match match in matches)
                 {
                     string coverageFile = match.Groups[1].Value;
-                    ParseCoverageResults(coverageFile, stats);
+                    ParseCoverageResults(coverageFile, out double testCoverage);
+                    totalCoverage += testCoverage;
                 }
+                testResults.CoveragePercent = totalCoverage / matches.Count;
             }
             return testResults;
         }

@@ -139,7 +139,7 @@ namespace GitRepoTracker
             return output.Contains("Build succeeded");
         }
 
-        public TestResults Test(CommitStats stats, bool calculateCoverage, string testProject)
+        public TestResults Test(bool calculateCoverage, string testProject)
         {
             string args = string.IsNullOrEmpty(testProject) ?
                 "test" : $"test \"{testProject}\"";
@@ -147,12 +147,9 @@ namespace GitRepoTracker
                 $" --collect:\"XPlat Code Coverage\" -l \"console;verbosity=normal\"" 
                 : $" -l \"console;verbosity=normal\"";
 
-            //if (!string.IsNullOrEmpty(testProjectFolder))
-            //    args += $" --filter {testProjectFolder}";
-
             string output = RunCommand(args, "dotnet", true);
 
-            return GitOutputParser.ParseTestResults(output, stats, calculateCoverage);
+            return GitOutputParser.ParseTestResults(output, calculateCoverage);
         }
 
         public string FindProjectByName(string projectName)
@@ -170,6 +167,15 @@ namespace GitRepoTracker
             if (files.Length > 0)
                 return Path.GetFullPath(files[0]);
             return null;
+        }
+
+        public List<string> GetAllProjects()
+        {
+            string[] files = Directory.GetFiles(Folder, "*.csproj", SearchOption.AllDirectories);
+            List<string> projects = new List<string>();
+            foreach (string file in files)
+                projects.Add(Path.GetFullPath(file));
+            return projects;
         }
 
         public void Restore()
@@ -312,6 +318,7 @@ namespace GitRepoTracker
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
+            startInfo.StandardOutputEncoding = new UTF8Encoding(false);
 
             Process process = new Process();
             process.StartInfo = startInfo;

@@ -140,14 +140,15 @@ namespace GitRepoTracker
                     //Compare with previous stats and update incremental stats
                     if (commit.Date >= Program.Config.StartDate && commit.Stats.Builds)
                     {
-                        double coveragePercentInc = commit.Stats.CoveragePercent - prevBuildingCommit.Stats.CoveragePercent;
+                        double coveragePercentInc = commit.Stats.UserTestsResults.CoveragePercent 
+                            - prevBuildingCommit.Stats.UserTestsResults.CoveragePercent;
                         incrementalStats.CoveragePercent += coveragePercentInc;
 
                         if (coveragePercentInc != 0)
                         {
                             incrementalStats.CoverageChanges.Add(new Evaluation.CommitLinkedItem(commit,
-                                $"{Utils.DoubleToString(coveragePercentInc,2)}% ({Utils.DoubleToString(prevBuildingCommit.Stats.CoveragePercent, 2)}% " +
-                                $"-> {Utils.DoubleToString(commit.Stats.CoveragePercent, 2)}%)"));
+                                $"{Utils.DoubleToString(coveragePercentInc,2)}% ({Utils.DoubleToString(prevBuildingCommit.Stats.UserTestsResults.CoveragePercent, 2)}% " +
+                                $"-> {Utils.DoubleToString(commit.Stats.UserTestsResults.CoveragePercent, 2)}%)"));
                         }
 
                         double passedTestsPercentInc = commit.Stats.UserTestsResults.Passed.Count

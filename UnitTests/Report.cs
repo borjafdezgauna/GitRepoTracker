@@ -70,7 +70,7 @@ namespace UnitTests
                 Message = "#1 First commit and counting",
             };
             commit.Stats.Builds = true;
-            commit.Stats.CoveragePercent = 20;
+            commit.Stats.UserTestsResults.CoveragePercent = 20;
             commit.Stats.UserTestsResults.Failed = new List<string>() {  };
             commit.Stats.UserTestsResults.Passed = new List<string>() { };
             report1.Commits.Add(commit);
@@ -82,7 +82,7 @@ namespace UnitTests
                 Message = "#2,3 Second commit and counting"
             };
             commit.Stats.Builds = true;
-            commit.Stats.CoveragePercent = 0;
+            commit.Stats.UserTestsResults.CoveragePercent = 0;
             commit.Stats.UserTestsResults.Passed = new List<string>() { "Parser.Test1" };
             commit.Stats.UserTestsResults.Failed = new List<string>() { "Parser.Test2" };
             report1.Commits.Add(commit);
@@ -93,7 +93,7 @@ namespace UnitTests
                 Id = "f4147de7cc1784b0687f35e3071ffc33fceb229b"
             };
             commit.Stats.Builds = false;
-            commit.Stats.CoveragePercent = 0.0;
+            commit.Stats.UserTestsResults.CoveragePercent = 0.0;
             report1.Commits.Add(commit);
             commit = new Commit()
             {
@@ -103,7 +103,7 @@ namespace UnitTests
                 Message = "Merge commit"
             };
             commit.Stats.Builds = true;
-            commit.Stats.CoveragePercent = 0.0;
+            commit.Stats.UserTestsResults.CoveragePercent = 0.0;
             commit.Stats.UserTestsResults.Failed = new List<string>() { "Parser.Test1", "Parser.Test2" };
             report1.Commits.Add(commit);
             commit = new Commit()
@@ -114,7 +114,7 @@ namespace UnitTests
                 Message = "#1 Third commit and counting"
             };
             commit.Stats.Builds = true;
-            commit.Stats.CoveragePercent = 30;
+            commit.Stats.UserTestsResults.CoveragePercent = 30;
             report1.Commits.Add(commit);
 
             commit.Stats.UserTestsResults = new TestResults();

@@ -19,7 +19,7 @@ namespace GitRepoTracker.Evaluation
                 EvaluationItems.Add(new Requirement("Group tests passed",
                     report.LastCommit.Stats.UserTestsResults.PercentPassed() == 100));
                 EvaluationItems.Add(new RealValueEvaluationItem("Group tests coverage %",
-                    report.LastCommit.Stats.CoveragePercent));
+                    report.LastCommit.Stats.UserTestsResults.CoveragePercent));
 
                 for (int i= 0; i< Program.Config.Deadlines.Count; i++)
                 {

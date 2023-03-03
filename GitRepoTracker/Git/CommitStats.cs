@@ -21,7 +21,7 @@ namespace GitRepoTracker
         }
 
         [XmlElement]
-        public TestResults UserTestsResults { get; set; } = new TestResults() { TestName = "User tests" };
+        public TestResults UserTestsResults { get; set; } = new TestResults();
 
         [XmlElement]
         public List<TestResults> DeadlineTestsResults { get; set; } = new List<TestResults>();
@@ -29,8 +29,7 @@ namespace GitRepoTracker
         [XmlElement]
         public bool BuildsAndPassesTests => Builds && UserTestsResults.Failed.Count == 0;
 
-        [XmlElement]
-        public double CoveragePercent { get; set; }
+
 
         [XmlElement]
         public CodeAnalysis.AnalysisResult AnalysisResult { get; set; } =
