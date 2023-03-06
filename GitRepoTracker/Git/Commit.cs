@@ -151,14 +151,19 @@ namespace GitRepoTracker
                                 $"-> {Utils.DoubleToString(commit.Stats.UserTestsResults.CoveragePercent, 2)}%)"));
                         }
 
-                        double passedTestsPercentInc = commit.Stats.UserTestsResults.Passed.Count
-                            - prevBuildingCommit.Stats.UserTestsResults.Passed.Count;
-                        incrementalStats.PassedTestsPercent += passedTestsPercentInc;
+                        double passedTestNorm = (commit.Stats.UserTestsResults.Passed.Count /
+                            ((double)commit.Stats.UserTestsResults.Passed.Count + commit.Stats.UserTestsResults.Failed.Count));
+                        double previousPassedTestNorm = (prevBuildingCommit.Stats.UserTestsResults.Passed.Count /
+                            ((double)prevBuildingCommit.Stats.UserTestsResults.Passed.Count + prevBuildingCommit.Stats.UserTestsResults.Failed.Count));
 
-                        if (passedTestsPercentInc != 0)
+                        double passedTestPercentInc = 100 * (passedTestNorm - previousPassedTestNorm);
+                        if (passedTestPercentInc != 0)
                         {
+                            incrementalStats.PassedTestsPercent += passedTestPercentInc;
+
                             incrementalStats.PassedTestsChanges.Add(new Evaluation.CommitLinkedItem(commit,
-                                $"{Utils.DoubleToString(passedTestsPercentInc,2)}% ({prevBuildingCommit.Stats.UserTestsResults.Passed.Count}/{prevBuildingCommit.Stats.UserTestsResults.NumTests} " +
+                                $"{Utils.DoubleToString(passedTestPercentInc, 2)}% " +
+                                $"({prevBuildingCommit.Stats.UserTestsResults.Passed.Count}/{prevBuildingCommit.Stats.UserTestsResults.NumTests} " +
                                 $"-> {commit.Stats.UserTestsResults.Passed.Count}/{commit.Stats.UserTestsResults.NumTests})"));
                         }
                         
@@ -233,9 +238,9 @@ namespace GitRepoTracker
             {
                 Commit lastCommit = commits[commits.Count - 1];
 
-                if (lastCommit.Stats.UserTestsResults.NumTests > 0)
-                    incrementalStats.PassedTestsPercent =
-                            100 * (incrementalStats.PassedTestsPercent / (double)lastCommit.Stats.UserTestsResults.NumTests);
+                //if (lastCommit.Stats.UserTestsResults.NumTests > 0)
+                //    incrementalStats.PassedTestsPercent =
+                //            100 * (incrementalStats.PassedTestsPercent / (double)lastCommit.Stats.UserTestsResults.NumTests);
 
                 for (int i= 0; i< lastCommit.Stats.DeadlineTestsResults.Count; i++)
                 {

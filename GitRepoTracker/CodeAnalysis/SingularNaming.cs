@@ -17,6 +17,8 @@ namespace GitRepoTracker.CodeAnalysis
         }
         public override string ProcessMatch(Match match)
         {
+            if (match.Groups[1].Value == "Equals")
+                return null;
             if (match.Groups.Count == 3)
                 return match.Groups[1].Value;
             if (match.Groups.Count == 4 && ( !match.Groups[2].Value.Contains("List")
