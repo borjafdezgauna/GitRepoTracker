@@ -147,6 +147,26 @@ namespace GitRepoTracker
                 $" --collect:\"XPlat Code Coverage\" -l \"console;verbosity=normal\"" 
                 : $" -l \"console;verbosity=normal\"";
 
+            //Clean test output folder
+            string testOutputFolder = Path.GetDirectoryName(testProject);
+            string outputFolder = testOutputFolder + "\\bin\\Debug\\net6.0";
+            if (!Directory.Exists(outputFolder))
+                outputFolder = testOutputFolder + "\\bin\\Debug\\net6";
+
+            //Clean files
+            List<string> allowedExtensions = new List<string> { ".json", ".dll", ".pdb", ".exe" };
+            foreach (string file in Directory.GetFiles(outputFolder))
+            {
+                string fileExtension = Path.GetExtension(file);
+                if (!allowedExtensions.Contains(fileExtension))
+                    File.Delete(file);
+            }
+            //Clean directories
+            foreach (string dir in Directory.GetDirectories(outputFolder))
+            {
+                Directory.Delete(dir, true);
+            }
+
             string output = RunCommand(args, "dotnet", true);
 
             return GitOutputParser.ParseTestResults(output, calculateCoverage);

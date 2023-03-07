@@ -14,6 +14,9 @@ namespace GitRepoTracker
         public List<string> Failed { get; set; } = new List<string>();
 
         [XmlElement]
+        public string FullOutput { get; set; }
+
+        [XmlElement]
         public double CoveragePercent { get; set; }
 
         public int NumTests => Passed.Count + Failed.Count;

@@ -92,6 +92,8 @@ namespace GitRepoTracker
         {
             TestResults testResults = new TestResults();
 
+            testResults.FullOutput = output;
+
             string testResultRegex = @"(Passed|Failed) ([\w\.]+) \[";
             foreach (Match match in Regex.Matches(output, testResultRegex))
             {
