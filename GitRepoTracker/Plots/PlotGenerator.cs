@@ -130,6 +130,7 @@ namespace GitRepoTracker.Plots
                     OxyPlot.Series.LineSeries newSeries = new OxyPlot.Series.LineSeries()
                     {
                         Background = OxyColors.Transparent,
+                        Color = m_oxyPlotColors[colorIndex],
                         MarkerStrokeThickness = 0,
                         MarkerFill = m_oxyPlotColors[colorIndex],
                         MarkerStroke = m_oxyPlotColors[colorIndex],
@@ -191,10 +192,13 @@ namespace GitRepoTracker.Plots
                 colorIndex = 0;
                 foreach (Evaluation.Deadline deadline in deadlines)
                 {
+                    OxyColor color = OxyColor.FromArgb(80, m_oxyPlotColors[colorIndex].R, m_oxyPlotColors[colorIndex].G, m_oxyPlotColors[colorIndex].B);
                     OxyPlot.Series.LineSeries newSeries = new OxyPlot.Series.LineSeries()
                     {
                         Background = OxyColors.Transparent,
-                        Color = m_oxyPlotColors[colorIndex]
+                        Color = color,
+                        MarkerFill = color,
+                        MarkerStroke = color
                     };
                     double deadlineStartX = xOffset + xWidth * (double)(deadline.Start - start).TotalSeconds
                                 / (double)(end - start).TotalSeconds;

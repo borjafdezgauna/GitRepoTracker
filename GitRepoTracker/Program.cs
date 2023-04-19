@@ -172,28 +172,28 @@ namespace GitRepoTracker
                     {
                         Console.WriteLine("Error: not sure what the problem is");
                     }
-
-                    //After processing all commits
-                    //1. set unknown users
-                    foreach (string unknownUser in GitOutputParser.UnknownUsers)
-                    {
-                        if (!report.UnknowUsers.Contains(unknownUser))
-                            report.UnknowUsers.Add(unknownUser);
-                    }
-                    GitOutputParser.UnknownUsers.Clear();
-
-                    report.Images.Clear();
-
-                    //2. generate activity plot
-                    string imageFile = $"activity-plot-{group.Project.Replace("/", "-").Replace("\\", "-")}.png";
-                    Plots.PlotGenerator.UserActivityPlot(report.Commits, imageFile);
-                    report.Images.Add(imageFile);
-
-                    //3. generate deadlines plot
-                    imageFile = $"deadlines-plot-{group.Project.Replace("/", "-").Replace("\\", "-")}.png";
-                    Plots.PlotGenerator.DeadlinesProgressPlot(report.Commits, Config.Deadlines, imageFile);
-                    report.Images.Add(imageFile);
                 }
+
+                //After processing all commits
+                //1. set unknown users
+                foreach (string unknownUser in GitOutputParser.UnknownUsers)
+                {
+                    if (!report.UnknowUsers.Contains(unknownUser))
+                        report.UnknowUsers.Add(unknownUser);
+                }
+                GitOutputParser.UnknownUsers.Clear();
+
+                report.Images.Clear();
+
+                //2. generate activity plot
+                string imageFile = $"activity-plot-{group.Project.Replace("/", "-").Replace("\\", "-")}.png";
+                Plots.PlotGenerator.UserActivityPlot(report.Commits, imageFile);
+                report.Images.Add(imageFile);
+
+                //3. generate deadlines plot
+                imageFile = $"deadlines-plot-{group.Project.Replace("/", "-").Replace("\\", "-")}.png";
+                Plots.PlotGenerator.DeadlinesProgressPlot(report.Commits, Config.Deadlines, imageFile);
+                report.Images.Add(imageFile);
 
                 //#if DEBUG
                 //#else
